@@ -1,28 +1,26 @@
-# Phase 1: Building Your Agent Library
+Phase 1: Building the Agent Library
+1. Introduction
 
-## 1. Introduction
+In Phase 1 of this project, I developed a reusable library of agents intended to support agentic workflows. Although these agents will be applied directly within the Phase 2 Project Management workflow, they were intentionally designed to be general-purpose so they can be reused across multiple workflow types.
 
-In the first phase of the project, you will build a library of reusable agents designed to support agentic workflows. While these agents will be used in the Phase 2 Project Management workflow, they are intended for general use across a variety of workflows.
+This phase involved both implementing the agent library itself and creating standalone scripts to instantiate and test each agent. These test scripts were used to validate correctness and to demonstrate that each agent behaves as expected based on its design and intended functionality.
 
-In this phase, you will develop both the agent library and supporting scripts that instantiate and test each agent. These scripts will help verify that the agents function correctly and give you a deeper understanding of their behavior and capabilities.
+By completing this phase, I have:
 
-**By the end of this phase, you will have:**
+Implemented seven distinct agent classes within a single base_agents.py file, with each class representing a different agent workflow pattern.
 
-* Implemented seven agent classes in a single `base_agents.py` file, each demonstrating a unique agent workflow.
-* Verified each agent’s behavior with a standalone test script.
-* Organized your code into a clean, importable package that can be extended in Phase 2.
+Verified the behavior of each agent using an independent test script.
 
----
+Structured the codebase as a clean, modular, and importable Python package that can be extended and reused in Phase 2.
 
-## 2. Directory Structure
+2. Directory Structure
 
-You will see files inside the `phase_1` folder arranged as follows:
+The contents of the phase_1 directory are organized as follows:
 
-```
 phase_1/
 ├── workflow_agents/
 │   ├── __init__.py             ← (empty)
-│   └── base_agents.py          ← Student implementation file
+│   └── base_agents.py          ← Agent implementations
 ├── direct_prompt_agent.py
 ├── augmented_prompt_agent.py
 ├── knowledge_augmented_prompt_agent.py
@@ -30,294 +28,297 @@ phase_1/
 ├── evaluation_agent.py
 ├── routing_agent.py
 └── action_planning_agent.py
-```
 
-* `workflow_agents` is a Python package containing all your agent class definitions.
-* One script per agent to test their functionality has also been provided in the folder.
 
-**Environment Configuration:** Create a `.env` file in the `tests/` folder containing your OpenAI API key:
+The workflow_agents directory is a Python package that contains all agent class definitions.
 
-```
+Each agent has a corresponding standalone script used to test and demonstrate its functionality.
+
+Environment Setup:
+To run the test scripts, I created a .env file inside the tests/ directory containing my OpenAI API key:
+
 OPENAI_API_KEY=your_openai_api_key
-```
 
----
+3. Agent Library Implementation
 
-## 3. Agent Library Implementation
+All agent classes were implemented in workflow_agents/base_agents.py and tested using the provided scripts. The agents were developed and validated in the order described below.
 
-Complete each agent class in `workflow_agents/base_agents.py` in the following order, and validate using the provided test scripts.
+3.1 Direct Prompt Agent
 
-### 3.1 Direct Prompt Agent
+The Direct Prompt Agent represents the simplest interaction pattern with a Large Language Model (LLM). It forwards a user’s prompt directly to the model and returns the generated response without introducing memory, external context, or additional tools.
 
-A **Direct Prompt Agent** offers the most straightforward method for interacting with a Large Language Model (LLM). It directly relays a user's input (prompt) to the LLM and returns the LLM's response without incorporating additional context, memory, or specialized tools.
+DirectPromptAgent Implementation
 
----
+File: workflow_agents/base_agents.py
 
-#### Define the `DirectPromptAgent` Class
+To implement this agent, I completed the following steps:
 
-**File:** `workflow_agents/base_agents.py`
+Imported the OpenAI class from the OpenAI Python SDK.
 
-Complete the following tasks to implement your `DirectPromptAgent` class:
+Stored the provided OpenAI API key as an instance attribute (openai_api_key) within the constructor.
 
-1.  **Import the `OpenAI` Class:** Import the `OpenAI` class from the OpenAI Python library.
-2.  **Store the API Key:** Within the class constructor (`__init__`), create an attribute named `openai_api_key` to store the provided OpenAI API key.
-3.  **Select the LLM Model:** When calling the OpenAI API, select the `gpt-3.5-turbo` model for generating completions.
-4.  **Send the User Prompt:** Pass the user-provided prompt directly to the model as a user message. Do not include a system prompt.
-5.  **Implement the `respond` method:** Return only the content (text) of the LLM's response, not the full JSON payload.
+Configured the agent to use the gpt-3.5-turbo model when requesting completions.
 
----
+Passed the user’s prompt directly as a user message, without including a system prompt.
 
-#### Test the `DirectPromptAgent` Class
+Implemented a respond method that returns only the textual content of the LLM response rather than the full API payload.
 
-**File:** `direct_prompt_agent_test.py`
+Testing the DirectPromptAgent
 
-Complete these steps in your test script to verify the functionality of the `DirectPromptAgent`:
+File: direct_prompt_agent_test.py
 
-1.  **Import the Class:** Import the `DirectPromptAgent` class from `base_agents.py`.
-2.  **Load the API Key:** Use the `dotenv` library to securely load your OpenAI API key from an environment file.
-3.  **Instantiate the Agent:** Create an instance of the `DirectPromptAgent` class named `direct_agent` using the loaded API key.
-4.  **Prompt the Agent:** Send the following prompt to the agent, store the response, and print it:
-    ```
-    "What is the Capital of France?"
-    ```
-5.  **Explain Knowledge Source:** Include a descriptive print statement explaining source of the knowledge the agent used to respond to your prompt (Hint: the agent uses general knowledge from the selected LLM model).
+To validate this agent, I:
 
----
+Imported the DirectPromptAgent class from base_agents.py.
 
-### 3.2 Augmented Prompt Agent
+Used the dotenv library to load my OpenAI API key from the environment.
 
-An **Augmented Prompt Agent** is a specialized agent designed to respond according to a predefined persona. Unlike basic prompt-response interactions, this agent explicitly adopts a persona, leading to more targeted and contextually relevant outputs.
+Instantiated the agent as direct_agent using the loaded API key.
 
----
+Sent the prompt:
 
-#### Define the `AugmentedPromptAgent` Class
+"What is the capital of France?"
 
-**File:** `workflow_agents/base_agents.py`
 
-Complete the following steps to implement your `AugmentedPromptAgent` class:
+and printed the returned response.
 
-1.  **Create Persona Attribute:** Create an attribute within the class to store the agent's persona.
-2.  **Call OpenAI API:** Declare a variable (e.g., `response`) to store the result of calling OpenAI's API for chat completions.
-3.  **Include System Prompt:** Construct a system prompt that instructs the agent to assume the defined persona. Ensure the agent is explicitly told to forget any previous conversational context.
-4.  **Return Textual Content:** In the `respond` method, return only the textual content of the response from the API, not the full JSON response.
+Included a descriptive print statement explaining that the response was generated using the LLM’s general world knowledge.
 
----
+3.2 Augmented Prompt Agent
 
-#### Test the `AugmentedPromptAgent` Class
+The Augmented Prompt Agent extends basic prompting by enforcing a predefined persona. By explicitly setting a persona through a system prompt, the agent produces more targeted and context-aware responses.
 
-**File:** `augmented_prompt_agent_test.py`
+AugmentedPromptAgent Implementation
 
-Complete the following tasks in your test script to test the `AugmentedPromptAgent`:
+File: workflow_agents/base_agents.py
 
-1.  **Import the Class:** Import the `AugmentedPromptAgent` class from `base_agents.py`.
-2.  **Instantiate the Agent:** Create an instance of the `AugmentedPromptAgent` class using your OpenAI API key and a defined persona.
-3.  **Send a Prompt:** Send a prompt to the agent and store the result in a variable named `augmented_agent_response`.
-4.  **Print the Response:** Clearly print the `augmented_agent_response` to verify the agent’s behavior.
-5.  **Provide Explanatory Comments:** Include comments discussing:
-    * The type of knowledge the agent likely used to generate its response.
-    * How specifying the agent’s persona affected the final output.
+The following steps were completed:
 
----
+Added an attribute to store the agent’s persona.
 
-### 3.3 Knowledge Augmented Prompt Agent
+Stored the result of the OpenAI chat completion call in a variable (e.g., response).
 
-The **Knowledge Augmented Prompt Agent** is designed to incorporate specific, provided knowledge alongside a defined persona when responding to prompts, ensuring answers are based on that explicit information.
+Constructed a system prompt instructing the agent to adopt the specified persona and to ignore any prior conversational context.
 
----
+Ensured that the respond method returns only the generated text output.
 
-#### Define the `KnowledgeAugmentedPromptAgent` Class
+Testing the AugmentedPromptAgent
 
-**File:** `workflow_agents/base_agents.py`
+File: augmented_prompt_agent_test.py
 
-Complete the following steps to build this agent class:
+For testing, I:
 
-1.  **Create Persona Attribute:** Create an attribute for storing the agent’s persona.
-2.  **Create Knowledge Attribute:** Create an attribute for storing the agent’s specific knowledge.
-3.  **Implement the `respond` method:** Within this method:
-    * Construct a **system message** that clearly defines the persona with the instruction:
-        ```
-        You are _persona_ knowledge-based assistant. Forget all previous context.
-        ```
-        (Replace `_persona_` with the actual persona variable/attribute).
-    * Clearly specify the provided knowledge in the system message:
-        ```
-        Use only the following knowledge to answer, do not use your own knowledge: _knowledge_
-        ```
-        (Replace `_knowledge_` with the actual knowledge variable/attribute).
-    * Include a final instruction in the system message:
-        ```
-        Answer the prompt based on this knowledge, not your own.
-        ```
-4.  **Append User Prompt:** Append the user's input prompt as a separate message in the API request.
+Imported the AugmentedPromptAgent class.
 
----
+Instantiated the agent using my OpenAI API key and a defined persona.
 
-#### Test the `KnowledgeAugmentedPromptAgent` Class
+Sent a prompt and stored the output in augmented_agent_response.
 
-**File:** `knowledge_augmented_prompt_agent.py`
+Printed the response to confirm expected behavior.
 
-Complete the following steps in your test script to instantiate and test the `KnowledgeAugmentedPromptAgent`:
+Added explanatory comments describing:
 
-1.  **Import the Class:** Import the `KnowledgeAugmentedPromptAgent` class from `base_agents.py`.
-2.  **Load the API Key:** Load your OpenAI API key from your `.env` file.
-3.  **Instantiate the Agent:** Create an instance of the agent with the following parameters:
-    * **Persona:**
-        ```
-        "You are a college professor, your answer always starts with: Dear students,"
-        ```
-    * **Knowledge:**
-        ```
-        "The capital of France is London, not Paris"
-        ```
-4.  **Test the Agent:** Use the following prompt:
-    ```
-    "What is the capital of France?"
-    ```
-5.  **Confirm Knowledge Usage:** Add a print statement to confirm the agent’s response explicitly uses the provided knowledge rather than its inherent knowledge from the LLM.
+The type of knowledge used by the agent.
 
----
+How the enforced persona influenced the final output.
 
-### 3.4 RAG Knowledge Prompt Agent
+3.3 Knowledge Augmented Prompt Agent
 
-The **RAG Knowledge Prompt Agent** uses retrieval-augmented generation for dynamic knowledge sourcing. You don't need to implement this, as the code has been provided. Feel free to go through the code if you are familiar with RAG. You can learn more about RAG [here](https://dl.acm.org/doi/abs/10.5555/3495724.3496517) and [here](https://en.wikipedia.org/wiki/Retrieval-augmented_generation).
+The Knowledge Augmented Prompt Agent is designed to respond strictly based on explicitly provided knowledge, combined with a defined persona. This ensures the agent does not rely on the model’s inherent knowledge.
 
----
+KnowledgeAugmentedPromptAgent Implementation
 
-### 3.5 Evaluation Agent
+File: workflow_agents/base_agents.py
 
-The **Evaluation Agent** is designed to assess responses from another agent (a "worker" agent) against a given set of criteria, potentially refining the response through iterative feedback.
+The agent was implemented by:
 
----
+Defining attributes to store both persona and knowledge.
 
-#### Define the `EvaluationAgent` Class
+Building a respond method that constructs a system message containing:
 
-**File:** `workflow_agents/base_agents.py`
+A persona definition instructing the agent to forget all prior context.
 
-Complete the following tasks to implement the `EvaluationAgent` class:
+A directive to use only the supplied knowledge.
 
-1.  **Declare Class Attributes:** Define all necessary class attributes for the `EvaluationAgent`, including one for `max_interactions`.
-2.  **Implement Interaction Loop:** Create a loop that is limited by the `max_interactions` attribute.
-3.  **Retrieve Worker Response:** Within the loop, retrieve a response from the worker agent.
-4.  **Construct Evaluation Prompt:** Formulate an evaluation prompt that incorporates the predefined evaluation criteria.
-5.  **Define Evaluation Message Structure:** Define the message structure to evaluate responses using the OpenAI API. Set `temperature=0` for this call.
-6.  **Define Correction Instruction Message Structure:** Define the message structure to generate instructions for correcting responses, also using the OpenAI API with `temperature=0`.
-7.  **Return Results:** Ensure the `respond` method (or equivalent) returns a dictionary containing the final response from the worker agent, the evaluation result, and the count of iterations performed.
+A final instruction to base the answer solely on that knowledge.
 
----
+Appending the user prompt as a separate message in the API call.
 
-#### Test the `EvaluationAgent` Class
+Testing the KnowledgeAugmentedPromptAgent
 
-**File:** `evaluation_agent.py`
+File: knowledge_augmented_prompt_agent.py
 
-Complete the following steps in your test script to instantiate and test the `EvaluationAgent`:
+To test this agent, I:
 
-1.  **Import Classes:** Import the `EvaluationAgent` and `KnowledgeAugmentedPromptAgent` from `base_agents.py`.
-2.  **Instantiate Worker Agent:** Create an instance of `KnowledgeAugmentedPromptAgent` with:
-    * **Persona:**
-        ```
-        "You are a college professor, your answer always starts with: Dear students,"
-        ```
-    * **Knowledge:**
-        ```
-        "The capitol of France is London, not Paris"
-        ```
-3.  **Instantiate Evaluation Agent:** Create an instance of the `EvaluationAgent` with a maximum of `10` interactions.
-4.  **Evaluate Prompt and Print:** Evaluate the prompt `"What is the capital of France?"` using the `EvaluationAgent` and print the resulting evaluation.
+Imported the class from base_agents.py.
 
----
+Loaded my OpenAI API key from the .env file.
 
-### 3.6 Routing Agent
+Instantiated the agent using:
 
-The **Routing Agent** is capable of directing user prompts to the most appropriate specialized agent from a collection, based on semantic similarity between the prompt and descriptions of what each agent handles.
+Persona:
 
----
+"You are a college professor, your answer always starts with: Dear students,"
 
-#### Define the `RoutingAgent` Class
 
-**File:** `workflow_agents/base_agents.py`
+Knowledge:
 
-Complete the following tasks to implement the `RoutingAgent` class:
+"The capital of France is London, not Paris"
 
-1.  **Define `agents` Attribute:** Within the class constructor (`__init__`), define an attribute named `agents` to store agent details (e.g., descriptions and their callable functions/methods).
-2.  **Implement `get_embedding` Method:** Implement a method to calculate text embeddings using the `text-embedding-3-large` model from OpenAI.
-3.  **Create Routing Method:** Create a new method to route user prompts. This method should:
-    * Compute the embedding for the user input prompt.
-    * Iterate over each agent stored in the `agents` attribute:
-        * Compute the embedding for each agent's description.
-        * Calculate the cosine similarity between the user prompt embedding and the agent description embedding.
-        * Select the agent that has the highest similarity score.
-4.  **Return Selected Agent's Response:** The routing method should return the response obtained by calling the selected agent.
 
----
+Sent the prompt:
 
-#### Test the `RoutingAgent` Class
+"What is the capital of France?"
 
-**File:** `routing_agent.py`
 
-Complete the following steps in your test script to instantiate and test the `RoutingAgent`:
+Printed the response to confirm that the agent relied solely on the provided knowledge.
 
-1.  **Import Classes:** Import `KnowledgeAugmentedPromptAgent` and `RoutingAgent` from `base_agents.py`.
-2.  **Instantiate Texas Agent:** Create an instance of `KnowledgeAugmentedPromptAgent` for Texas-related knowledge.
-3.  **Instantiate Europe Agent:** Create another instance of `KnowledgeAugmentedPromptAgent` for Europe-related knowledge.
-4.  **Instantiate Math Agent:** Create a third `KnowledgeAugmentedPromptAgent` specifically for math-related prompts.
-5.  **Define Agent Functions/Lambdas:** For each agent, define a function or lambda expression that will be called if that agent is selected. These functions will embody the agent's task (e.g., answering Texas-related questions).
-6.  **Assign Agents to Router:** Assign these agents (along with their descriptions and callable functions/lambdas) to the `agents` attribute of the `RoutingAgent` instance.
-7.  **Test Routing with Prompts:** Test your routing agent with the following prompts and print the results:
-    * `"Tell me about the history of Rome, Texas"`
-    * `"Tell me about the history of Rome, Italy"`
-    * `"One story takes 2 days, and there are 20 stories"`
+3.4 RAG Knowledge Prompt Agent
 
----
+The RAG Knowledge Prompt Agent uses retrieval-augmented generation to dynamically source information. This agent was provided and did not require implementation. I reviewed the code to understand its structure and behavior. Additional background on RAG can be found in the linked resources.
 
-### 3.7 Action Planning Agent
+3.5 Evaluation Agent
 
-The **Action Planning Agent** is crucial for constructing agentic workflows. This agent uses its provided knowledge to dynamically extract and list the steps required to execute a task described in a user's prompt.
+The Evaluation Agent evaluates responses produced by another agent (referred to as the worker agent) against predefined criteria and can iteratively refine responses.
 
----
+EvaluationAgent Implementation
 
-#### Define the `ActionPlanningAgent` Class
+File: workflow_agents/base_agents.py
 
-**File:** `workflow_agents/base_agents.py`
+The implementation included:
 
-Complete the following tasks to implement the `ActionPlanningAgent` class:
+Declaring all required class attributes, including max_interactions.
 
-1.  **Initialize Agent Attributes:** In the constructor (`__init__`), initialize attributes for the OpenAI API key and the agent's knowledge.
-2.  **Instantiate OpenAI Client:** Instantiate the OpenAI client object.
-3.  **Implement `respond` method (or similar logic):**
-    * Send a request to OpenAI's `gpt-3.5-turbo` model using:
-        * A **system prompt** defining the agent as an "Action Planning Agent" that extracts steps using provided knowledge.
-        * The **user's input prompt**.
-    * Extract and store the text response from the OpenAI API.
-4.  **Process Response:** Process the response text to clearly extract individual action steps, removing any empty or irrelevant lines to produce a clean list of actions.
+Creating a loop constrained by the maximum interaction count.
 
----
+Retrieving responses from the worker agent within each iteration.
 
-#### Test the `ActionPlanningAgent` Class
+Constructing an evaluation prompt based on the defined criteria.
 
-**File:** `action_planning_agent_test.py` (assuming this naming convention)
+Evaluating responses using the OpenAI API with temperature=0.
 
-Complete the following steps in your test script to test the `ActionPlanningAgent`:
+Generating correction instructions using a second API call, also with temperature=0.
 
-1.  **Import Libraries and Class:** Import necessary libraries (e.g., `dotenv`) and the `ActionPlanningAgent` class from `base_agents.py`.
-2.  **Load API Key:** Load environment variables and assign your OpenAI API key to a variable, for example, `openai_api_key`.
-3.  **Instantiate the Agent:** Create an instance of the `ActionPlanningAgent`, providing it with the defined knowledge (if any is specifically required for its action planning task beyond general instruction) and the API key.
-4.  **Verify Functionality:** Test the agent by sending it the following prompt and printing the extracted action steps:
-    ```
-    "One morning I wanted to have scrambled eggs"
-    ```
+Returning a dictionary containing the final response, evaluation result, and iteration count.
 
-## 4. Phase 1 Artifacts (to carry into Phase 2)
+Testing the EvaluationAgent
 
-At the end of Phase 1, you should have:
+File: evaluation_agent.py
 
-* A fully implemented `workflow_agents/base_agents.py`.
-* Seven test scripts, each demonstrating correct agent behavior.
-* Screenshots of correct outputs on running each of the seven scripts.
+To test this agent, I:
 
-> **Note:** Bundle these artifacts with your Phase 2 deliverables at the project's conclusion.
+Imported both EvaluationAgent and KnowledgeAugmentedPromptAgent.
 
----
+Created a worker agent using the professor persona and incorrect France knowledge.
 
-## 5. Next Steps: Preview of Phase 2
+Instantiated the EvaluationAgent with a maximum of 10 interactions.
 
-In Phase 2, you will use the agents library that you just implemented to create a complex multi-step workflow. Prepare to solve real-world problems with your agent workflow!
+Evaluated the prompt:
+
+"What is the capital of France?"
+
+
+and printed the evaluation output.
+
+3.6 Routing Agent
+
+The Routing Agent dynamically selects the most appropriate agent to handle a user prompt by comparing semantic similarity between prompt embeddings and agent descriptions.
+
+RoutingAgent Implementation
+
+File: workflow_agents/base_agents.py
+
+I implemented this agent by:
+
+Defining an agents attribute to store agent metadata and callable handlers.
+
+Implementing a get_embedding method using the text-embedding-3-large model.
+
+Creating a routing method that:
+
+Generates an embedding for the user prompt.
+
+Computes embeddings for each agent description.
+
+Calculates cosine similarity scores.
+
+Selects the agent with the highest similarity.
+
+Returning the selected agent’s response.
+
+Testing the RoutingAgent
+
+File: routing_agent.py
+
+Testing involved:
+
+Instantiating three knowledge-augmented agents for Texas, Europe, and math topics.
+
+Defining callable functions or lambdas for each agent.
+
+Assigning these agents to the router.
+
+Testing the router using the following prompts:
+
+"Tell me about the history of Rome, Texas"
+
+"Tell me about the history of Rome, Italy"
+
+"One story takes 2 days, and there are 20 stories"
+
+3.7 Action Planning Agent
+
+The Action Planning Agent extracts and structures actionable steps from a user’s prompt using provided knowledge.
+
+ActionPlanningAgent Implementation
+
+File: workflow_agents/base_agents.py
+
+This agent was implemented by:
+
+Initializing attributes for the API key and agent knowledge.
+
+Instantiating the OpenAI client.
+
+Sending prompts to the gpt-3.5-turbo model using:
+
+A system prompt defining the agent’s role as an action planner.
+
+The user’s task description.
+
+Processing the response to extract a clean, ordered list of actionable steps.
+
+Testing the ActionPlanningAgent
+
+File: action_planning_agent_test.py
+
+To validate functionality, I:
+
+Imported the required libraries and the agent class.
+
+Loaded the OpenAI API key from environment variables.
+
+Instantiated the agent.
+
+Sent the prompt:
+
+"One morning I wanted to have scrambled eggs"
+
+
+and printed the extracted action steps.
+
+4. Phase 1 Deliverables for Phase 2
+
+At the conclusion of Phase 1, I produced the following artifacts:
+
+A completed workflow_agents/base_agents.py file.
+
+Seven test scripts demonstrating correct agent behavior.
+
+Screenshots showing successful execution of all test scripts.
+
+Note: These artifacts are included with the Phase 2 submission.
+
+5. Phase 2 Preview
+
+In Phase 2, the agent library developed in this phase will be used to construct a more complex, multi-step agentic workflow aimed at solving real-world problems.
