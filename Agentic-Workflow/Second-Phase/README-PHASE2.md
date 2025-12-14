@@ -1,4 +1,5 @@
-Project Title: AI-Powered Agentic Workflow for Project Management
+AI-Powered Agentic Workflow for Project Management
+
 Phase 2: Implementing an Agentic Workflow Using a Predefined Agent Library
 
 Phase 2 builds directly on the agent library developed in Phase 1. In this phase, I use the previously implemented agent classes to construct a complete agentic workflow that simulates real-world project management tasks.
@@ -131,3 +132,4 @@ After all steps were processed, the final workflow output (typically the last el
 Summary
 
 This phase demonstrates how independently designed agents can be orchestrated into a cohesive, adaptive workflow that mirrors real-world project management processes. By combining action planning, knowledge grounding, evaluation, and routing, the system dynamically produces structured, role-specific outputs from a single high-level prompt.
+
