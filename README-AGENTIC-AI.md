@@ -1,33 +1,32 @@
-# AI-Powered Agentic Workflow for Project Management
+AI-Powered Agentic Workflow for Project Management
 
-In this repo, you will find all the files and instructions required to complete the project. You can find more information about the project inside the Udacity Classroom.
+This repository contains all files, resources, and instructions required to complete the project. Additional context and guidance for the assignment are available through the Udacity Classroom.
 
-## Getting Started
+Getting Started
 
-1. Create a new conda environment:
-```bash
+To begin working on the project locally, I set up a dedicated Python environment using Conda:
+
+Create a Conda environment
+
 conda create -n agentic_workflows python=3.13
-```
 
-2. Activate the environment:
-```bash
+
+Activate the environment
+
 conda activate agentic_workflows
-```
 
-3. Install the required dependencies:
-```bash
+
+Install project dependencies
+
 pip install -r requirements.txt
-```
 
-The project needs to be completed in two phases and you will find starter code for both the phases inside the `starter` folder in this repo. 
 
-## Dependencies
+The project is completed in two separate phases. Starter code for both Phase 1 and Phase 2 is provided in the starter directory within this repository.
 
-A `requirements.txt` file has been provided in this repo if you want to work on the project locally. Otherwise, the workspace provided in the Udacity classroom has been configured with all the required libraries. 
+Dependencies
 
-## Project Instructions
+A requirements.txt file is included for local development. Alternatively, the Udacity-provided workspace already includes all necessary libraries and does not require additional setup.
 
-You will find instructions for each of the two phases of the project in the README file inside the folder for that phase.
+Project Instructions
 
-## License
-[License](../LICENSE.md)
+Detailed instructions for each phase of the project can be found in the corresponding README file located within each phase’s directory.
